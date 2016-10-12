@@ -11,12 +11,12 @@ public class Factory {
 	private Product[] factory=new Product[3];
 	private int index=0;
 	
-	boolean produceflag=true;
+	//boolean produceflag=true;
 	
 	public synchronized void produce(Product product){
 		if(index==factory.length){
 			try {
-				produceflag=false;				
+				//produceflag=false;				
 				System.out.println(product.getProducedBy()+"producer is waiting");
 				wait();
 			} catch (InterruptedException e) {
@@ -25,13 +25,18 @@ public class Factory {
 			}
 		}
 		
-		produceflag=true;
+		//produceflag=true;
+		if(index!=factory.length){
+			factory[index]=product;
+			++index;
+			System.out.println(index+":"+product.getProducedBy()+"生产了---"+product.getProduct());
+			notify();
+			System.out.println(product.getProducedBy()+"唤醒潜在的消费者");
+		}
+		else{
+			System.out.println("线程notidfy冲突"+product.getProducedBy()+"无法生产");
+		}
 		
-		factory[index]=product;
-		++index;
-		System.out.println(index+":"+product.getProducedBy()+"生产了---"+product.getProduct());
-		notify();
-		System.out.println(product.getProducedBy()+"唤醒潜在的消费者");
 	}
 	
 	public synchronized void consume(String consumerName){
